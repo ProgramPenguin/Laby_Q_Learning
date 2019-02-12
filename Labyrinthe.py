@@ -22,8 +22,10 @@ class Labyrinthe:
         file_lines = file.readlines()
 
         # read the labyrinth's dimensions and initializing
-        nb_line = int(file_lines[0][0])+1
-        nb_col = int(file_lines[0][2])+1
+        header = file_lines[0].split(" ")
+        print(header)
+        nb_line = int(header[0])+1
+        nb_col = int(header[1])+1
         self.laby = np.zeros((nb_line,nb_col))
 
         for line in file_lines[1:]:
