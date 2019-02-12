@@ -22,6 +22,12 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QFrame" name="frame_lab">
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>480</height>
+       </size>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
