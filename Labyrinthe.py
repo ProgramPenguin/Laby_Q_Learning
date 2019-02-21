@@ -11,9 +11,10 @@ import numpy as np;
 
 class Labyrinthe:
 
-    def __init__(self, mat_laby):
+    def __init__(self, mat_laby,list_rewards):
 
         self.laby = mat_laby
+        self.rewards = list_rewards
 
     def load_labyrinthe(self,path_file):
 
@@ -23,9 +24,8 @@ class Labyrinthe:
 
         # read the labyrinth's dimensions and initializing
         header = file_lines[0].split(" ")
-        print(header)
-        nb_line = int(header[0])+1
-        nb_col = int(header[1])+1
+        nb_line = int(header[0])+2
+        nb_col = int(header[1])+2
         self.laby = np.zeros((nb_line,nb_col))
 
         for line in file_lines[1:]:
@@ -51,23 +51,49 @@ class Labyrinthe:
         else :
             # check left
             if(self.laby[pos_x-1][pos_y] != 3):
-                moves.extend(["left"])
+                moves.extend([3])
             # checks right
             if (self.laby[pos_x+1][pos_y] != 3):
-                moves.extend(["right"])
+                moves.extend([1])
             # checks up
             if (self.laby[pos_x][pos_y+1] != 3):
-                moves.extend(["down"])
+                moves.extend([2])
             # checks down
             if (self.laby[pos_x][pos_y-1] != 3):
-                moves.extend(["up"])
+                moves.extend([0])
         return moves
 
+    def move(self,pos_x,pos_y,dir):
+        moves = self.get_moves(pos_x,pos_y)
 
+        if dir in moves:
+            # update position
+            if (dir == 3):
+                new_pos_x = pos_x - 1
+                new_pos_y = pos_y
+            if (dir == 1):
+                new_pos_x = pos_x + 1
+                new_pos_y = pos_y
+            if (dir == 0):
+                new_pos_x = pos_x
+                new_pos_y = pos_y - 1
+            if (dir == 2):
+                new_pos_x = pos_x
+                new_pos_y = pos_y + 1
 
+            # assign reward
+            new_type = self.laby[new_pos_x][new_pos_y]
+            if (new_type == 0):
+                reward = self.rewards[0]
+            if (new_type == 1):
+                reward = self.rewards[0]
+            if (new_type == 2):
+                reward = self.rewards[2]
+            if (new_type == 3):
+                reward = self.rewards[3]
+            if (new_type == 4):
+                reward = self.rewards[1]
 
-
-test = Labyrinthe([])
-test.load_labyrinthe("data/test.txt")
-print(test.laby)
-print(test.get_moves(1,2))
+            return reward, (new_pos_x,new_pos_y)
+        else:
+            return 0, (pos_x,pos_y)
