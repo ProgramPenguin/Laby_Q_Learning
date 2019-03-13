@@ -10,7 +10,7 @@ from PyQt5 import QtWidgets, QtGui,Qt, QtCore
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication, QGraphicsEllipseItem
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QRectF, QStringListModel
-from QLearning import exploration
+import QLearning as ql
 import random
 import numpy as np
 import sys
@@ -31,18 +31,19 @@ class Interface(QDialog):
         self.pButton_FileSelect.clicked.connect(self.getFile_pBFS_clicked)
         self.pB_launch.clicked.connect(self.launch_algos)
         self.sendfileName.connect(self.display_laby)
-        self.pos_robot = (0,0);
+
+
 
         font_db = QtGui.QFontDatabase()
         font_id = QtGui.QFontDatabase.addApplicationFont("Font/Font Awesome 5 Pro-Solid-900.otf")
         family = font_db.applicationFontFamilies(font_id)
         self.my_font = QtGui.QFont(family[0])
         self.my_font.setPointSize(12)
+
+        self.pos_robot = (0, 0);
         self.image_robot = QtWidgets.QGraphicsTextItem("\uf544")
 
-
-
-
+        self.lab = Labyrinthe.Labyrinthe([], [])
 
 
     def InitWindow(self):
@@ -60,26 +61,26 @@ class Interface(QDialog):
     @pyqtSlot(str)
     def display_laby(self,filepath):
 
-        lab = Labyrinthe.Labyrinthe([], [])
-        lab.load_labyrinthe(filepath)
+        self.lab = Labyrinthe.Labyrinthe([], [])
+        self.lab.load_labyrinthe(filepath)
 
         self.item_display_ref = []
 
         i = 0
-        while (i < np.shape(lab.laby)[0]):
+        while (i < np.shape(self.lab.laby)[0]):
             j = 0
             temp = []
-            while(j < np.shape(lab.laby)[1]):
+            while(j < np.shape(self.lab.laby)[1]):
                 item = QtWidgets.QGraphicsRectItem(0, 0, 50, 50)
-                if (lab.laby[i][j] == 1):
+                if (self.lab.laby[i][j] == 1):
                     item.setBrush(QtGui.QColor('green'))
                     self.pos_robot = (i,j)
 
-                if (lab.laby[i][j] == 2):
+                if (self.lab.laby[i][j] == 2):
                     item.setBrush(QtGui.QColor('orange'))
-                if (lab.laby[i][j] == 3):
+                if (self.lab.laby[i][j] == 3):
                     item.setBrush(QtGui.QColor('black'))
-                if (lab.laby[i][j] == 4):
+                if (self.lab.laby[i][j] == 4):
                     item.setBrush(QtGui.QColor('red'))
 
                 item.setPos(i*50,j*50)
@@ -109,18 +110,13 @@ class Interface(QDialog):
         # item.setBrush(QtGui.QColor('purple'))
 
 
-    def update(self,probot, tab_Q):
+    def update_pos_robot(self,probot, tab_Q):
         if probot != self.pos_robot :
             self.image_robot.setPos(probot[0],probot[1])
 
 
     def launch_algos(self):
-        exploration(5000,0.5,test,[-1,-25,100,-50],0.5,0)
-
-
-
-
-
+        ql.QLearning.exploration(5000,0.5,self.lab,[-1,-25,100,-50],0.5,0)
 
 
 
