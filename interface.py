@@ -10,6 +10,7 @@ from PyQt5 import QtWidgets, QtGui,Qt, QtCore
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication, QGraphicsEllipseItem
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QRectF, QStringListModel
+from PyQt5.QtTest import QTest
 import QLearning
 import random
 import numpy as np
@@ -20,12 +21,17 @@ import time
 class Interface(QDialog):
 
     sendfileName = pyqtSignal(str)
+    sendPos = pyqtSignal(object)
 
     def __init__(self, UiFilePath):
         super().__init__()
         loadUi(UiFilePath,self)
         self.setWindowTitle("Labyrinth")
         self.InitWindow()
+
+        self.sendPos.connect(self.update_pos_robot)
+
+        self.qlearn = QLearning.QLearning()
 
         self.scene = QtWidgets.QGraphicsScene(self.graphicsView_laby)
         self.graphicsView_laby.setScene(self.scene)
@@ -110,25 +116,28 @@ class Interface(QDialog):
         # item = self.item_display_ref[5][5]
         # item.setBrush(QtGui.QColor('purple'))
 
-
-    def update_pos_robot(self,probot, tab_Q):
-        if probot != self.pos_robot :
-            self.image_robot.setPos(probot[0]*50,probot[1]*50)
-            self.pos_robot = probot
+    # @pyqtSlot(object)
+    def update_pos_robot(self,dataRob):
+        if dataRob != self.pos_robot :
+            self.image_robot.setPos(dataRob[0]*50,dataRob[1]*50)
+            self.pos_robot = dataRob
 
 
     def launch_algos(self):
         self.lab.rewards = [-1, -25, 100, -50]
         Q_tab = np.zeros((len(self.lab.laby), len(self.lab.laby[0]), 4))
         pos = self.lab.get_entries()[0]
+        tab_moves = []
 
-        # print(laby.laby)
+
         ql = QLearning.QLearning()
         for nb_move in range(5000):
-            Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0.5, 0)
-            self.update_pos_robot(pos,Q_tab)
-            print(pos)
-            # time.sleep(0.3)
+            Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0, 0)
+            tab_moves.append(pos)
+
+        for i in tab_moves:
+            self.update_pos_robot(i)
+            QTest.qWait(50)
 
 
 App = QApplication(sys.argv)
