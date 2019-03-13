@@ -134,6 +134,7 @@ class Interface(QDialog):
         for nb_move in range(5000):
             Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0, 0)
             tab_moves.append(pos)
+        #     lmao push moi ça pd
 
         for i in tab_moves:
             self.update_pos_robot(i)
