@@ -4,17 +4,6 @@ import numpy as np
 
 class QLearning :
 
-    def get_entries(self,lab):
-        nb_lig = len(lab.laby)
-        nb_col = len(lab.laby[0])
-        list_entries = []
-
-        for i in range(1,nb_lig-1):
-            for j in range(1, nb_col - 1):
-                if(lab.laby[i][j] == 1):
-                    list_entries.append((i,j))
-        return list_entries
-
     def exploration(self,Q_tab,pos,gamma,lab,epsilon,backtrack):
 
         new_Q_tab = Q_tab
@@ -40,12 +29,19 @@ class QLearning :
         new_Q_tab[pos[0]][pos[1]][selected_index] = r + gamma * max(Q_tab[new_pos[0]][new_pos[1]])
         # Si on arrive a la sortie, on repart a l'entree
         if lab.laby[new_pos[0]][new_pos[1]] == 2:
-            new_pos = self.get_entries(lab)[0]
+            new_pos = lab.get_entries()[0]
 
         return new_Q_tab, new_pos
 
 laby = lb.Labyrinthe([],[])
 laby.load_labyrinthe("data/test.txt")
+laby.rewards = [-1,-25,100,-50]
+Q_tab = np.zeros((len(laby.laby), len(laby.laby[0]), 4))
+pos= laby.get_entries()[0]
+
 # print(laby.laby)
 ql = QLearning()
-ql.exploration(5000,0.5,laby,[-1,-25,100,-50],0.5,0)
+for nb_move in range(5000):
+    Q_tab, pos = ql.exploration(Q_tab,pos,0.5,laby,0.5,0)
+
+print(Q_tab)

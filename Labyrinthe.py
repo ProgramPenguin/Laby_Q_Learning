@@ -16,6 +16,17 @@ class Labyrinthe:
         self.laby = mat_laby
         self.rewards = list_rewards
 
+    def get_entries(self):
+        nb_lig = len(self.laby)
+        nb_col = len(self.laby[0])
+        list_entries = []
+
+        for i in range(1,nb_lig-1):
+            for j in range(1, nb_col - 1):
+                if(self.laby[i][j] == 1):
+                    list_entries.append((i,j))
+        return list_entries
+
     def load_labyrinthe(self,path_file):
 
         # open the selected file and separate its lines
