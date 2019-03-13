@@ -32,16 +32,3 @@ class QLearning :
             new_pos = lab.get_entries()[0]
 
         return new_Q_tab, new_pos
-
-laby = lb.Labyrinthe([],[])
-laby.load_labyrinthe("data/test.txt")
-laby.rewards = [-1,-25,100,-50]
-Q_tab = np.zeros((len(laby.laby), len(laby.laby[0]), 4))
-pos= laby.get_entries()[0]
-
-# print(laby.laby)
-ql = QLearning()
-for nb_move in range(5000):
-    Q_tab, pos = ql.exploration(Q_tab,pos,0.5,laby,0.5,0)
-
-print(Q_tab)

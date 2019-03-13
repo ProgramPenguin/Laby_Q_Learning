@@ -10,11 +10,12 @@ from PyQt5 import QtWidgets, QtGui,Qt, QtCore
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication, QGraphicsEllipseItem
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QRectF, QStringListModel
-import QLearning as ql
+import QLearning
 import random
 import numpy as np
 import sys
 import Labyrinthe
+import time
 
 class Interface(QDialog):
 
@@ -112,14 +113,22 @@ class Interface(QDialog):
 
     def update_pos_robot(self,probot, tab_Q):
         if probot != self.pos_robot :
-            self.image_robot.setPos(probot[0],probot[1])
+            self.image_robot.setPos(probot[0]*50,probot[1]*50)
+            self.pos_robot = probot
 
 
     def launch_algos(self):
-        ql.QLearning.exploration(5000,0.5,self.lab,[-1,-25,100,-50],0.5,0)
+        self.lab.rewards = [-1, -25, 100, -50]
+        Q_tab = np.zeros((len(self.lab.laby), len(self.lab.laby[0]), 4))
+        pos = self.lab.get_entries()[0]
 
-
-
+        # print(laby.laby)
+        ql = QLearning.QLearning()
+        for nb_move in range(5000):
+            Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0.5, 0)
+            self.update_pos_robot(pos,Q_tab)
+            print(pos)
+            # time.sleep(0.3)
 
 
 App = QApplication(sys.argv)
