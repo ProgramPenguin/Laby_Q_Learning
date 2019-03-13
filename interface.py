@@ -10,6 +10,7 @@ from PyQt5 import QtWidgets, QtGui,Qt, QtCore
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication, QGraphicsEllipseItem
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QRectF, QStringListModel
+from QLearning import exploration
 import random
 import numpy as np
 import sys
@@ -28,6 +29,7 @@ class Interface(QDialog):
         self.scene = QtWidgets.QGraphicsScene(self.graphicsView_laby)
         self.graphicsView_laby.setScene(self.scene)
         self.pButton_FileSelect.clicked.connect(self.getFile_pBFS_clicked)
+        self.pB_launch.clicked.connect(self.launch_algos)
         self.sendfileName.connect(self.display_laby)
         self.pos_robot = (0,0);
 
@@ -112,7 +114,8 @@ class Interface(QDialog):
             self.image_robot.setPos(probot[0],probot[1])
 
 
-
+    def launch_algos(self):
+        exploration(5000,0.5,test,[-1,-25,100,-50],0.5,0)
 
 
 
