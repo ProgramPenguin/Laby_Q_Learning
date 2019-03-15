@@ -8,6 +8,11 @@ import numpy as np;
 # 3 - wall
 # 4 - trap
 
+# direction
+# 0 - up
+# 1 - right
+# 2 - down
+# 3 - left
 
 class Labyrinthe:
 
@@ -41,7 +46,7 @@ class Labyrinthe:
 
         for line in file_lines[1:]:
             car_line = line.split(" ")
-            self.laby[int(car_line[0])+1][int(car_line[1])+1]=int(car_line[2])
+            self.laby[int(car_line[1])+1][int(car_line[0])+1]=int(car_line[2])
 
         #fill borders with walls
         for i in range(nb_col):

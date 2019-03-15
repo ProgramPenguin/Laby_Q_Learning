@@ -68,6 +68,7 @@ class Interface(QDialog):
     @pyqtSlot(str)
     def display_laby(self,filepath):
 
+
         self.lab = Labyrinthe.Labyrinthe([], [])
         self.lab.load_labyrinthe(filepath)
 
@@ -132,13 +133,12 @@ class Interface(QDialog):
 
         ql = QLearning.QLearning()
         for nb_move in range(5000):
-            Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0, 0)
+            Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0.3, 0,[1, 2, 3, 0])
             tab_moves.append(pos)
-        #     lmao push moi ça pd
 
         for i in tab_moves:
             self.update_pos_robot(i)
-            QTest.qWait(50)
+            QTest.qWait(30)
 
 
 App = QApplication(sys.argv)
