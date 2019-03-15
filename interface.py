@@ -69,9 +69,15 @@ class Interface(QDialog):
     def display_laby(self,filepath):
 
 
+        if len(self.scene.items()) <= 0:
+            l_temp = self.scene.items()
+            for i in l_temp:
+                self.scene.removeItem(i)
+            self.scene.update()
+
+
         self.lab = Labyrinthe.Labyrinthe([], [])
         self.lab.load_labyrinthe(filepath)
-
         self.item_display_ref = []
 
         i = 0
@@ -80,10 +86,11 @@ class Interface(QDialog):
             temp = []
             while(j < np.shape(self.lab.laby)[1]):
                 item = QtWidgets.QGraphicsRectItem(0, 0, 50, 50)
+                if (self.lab.laby[i][j] == 0):
+                    item.setBrush(QtGui.QColor('white'))
                 if (self.lab.laby[i][j] == 1):
                     item.setBrush(QtGui.QColor('green'))
                     self.pos_robot = (i,j)
-
                 if (self.lab.laby[i][j] == 2):
                     item.setBrush(QtGui.QColor('orange'))
                 if (self.lab.laby[i][j] == 3):
