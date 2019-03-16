@@ -33,13 +33,23 @@ class Interface(QDialog):
 
         self.qlearn = QLearning.QLearning()
 
+        self.lineEdit_gamma.setText("0.5")
+        self.lineEdit_epsillon.setText("0.3")
+        self.lineEdit_iteration.setText("5000")
+
         self.scene = QtWidgets.QGraphicsScene(self.graphicsView_laby)
         self.graphicsView_laby.setScene(self.scene)
         self.pButton_FileSelect.clicked.connect(self.getFile_pBFS_clicked)
+        self.pB_launch.clicked.connect(self.exit_animation)
         self.pB_launch.clicked.connect(self.launch_algos)
         self.sendfileName.connect(self.display_laby)
 
-
+        self.stopAlgo = True
+        self.refreshRate = {}
+        self.refreshRate[1] = 25
+        self.refreshRate[2] = 50
+        self.refreshRate[3] = 120
+        self.refreshRate[4] = 750
 
         font_db = QtGui.QFontDatabase()
         font_id = QtGui.QFontDatabase.addApplicationFont("Font/Font Awesome 5 Pro-Solid-900.otf")
@@ -47,8 +57,9 @@ class Interface(QDialog):
         self.my_font = QtGui.QFont(family[0])
         self.my_font.setPointSize(12)
 
-        self.pos_robot = (0, 0);
+        self.pos_robot = (0, 0)
         self.image_robot = QtWidgets.QGraphicsTextItem("\uf544")
+        self.pB_launch.setEnabled(False)
 
         self.lab = Labyrinthe.Labyrinthe([], [])
 
@@ -105,9 +116,6 @@ class Interface(QDialog):
             self.item_display_ref.append(temp)
             i+=1
 
-        # item = self.item_display_ref[3][3]
-        # item.setBrush(QtGui.QColor('purple'))
-
         # arrow down : \uf063
         # arrow left : \uf060
         # arrow right: \uf061
@@ -115,15 +123,12 @@ class Interface(QDialog):
         # robot      : \uf544
 
 
-
         self.image_robot.setPos(self.pos_robot[0] * 50 , self.pos_robot[1] * 50)
         self.image_robot.setFont(self.my_font)
 
         self.scene.addItem(self.image_robot)
-        # # self.scene.update()
-        # item = self.item_display_ref[5][5]
-        # item.setBrush(QtGui.QColor('purple'))
 
+        self.pB_launch.setEnabled(True)
     # @pyqtSlot(object)
     def update_pos_robot(self,dataRob):
         if dataRob != self.pos_robot :
@@ -137,16 +142,38 @@ class Interface(QDialog):
         pos = self.lab.get_entries()[0]
         tab_moves = []
 
+        gamma = float(self.lineEdit_gamma.text())
+        epsillon = float(self.lineEdit_epsillon.text())
+        nb_iter = int(self.lineEdit_iteration.text())
+        refRateVal = self.hS_disRate.value()
 
         ql = QLearning.QLearning()
-        for nb_move in range(5000):
-            Q_tab, pos = ql.exploration(Q_tab, pos, 0.5, self.lab, 0.3, 0,[1, 2, 3, 0])
+
+        for nb_move in range(nb_iter):
+            Q_tab, pos = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 0,[1, 2, 3, 0])
             tab_moves.append(pos)
 
-        for i in tab_moves:
-            self.update_pos_robot(i)
-            QTest.qWait(30)
+        self.update_affichage(tab_moves,self.refreshRate[refRateVal])
 
+
+
+    def update_affichage(self,tab_moves,refresh_rate):
+        self.pB_launch.setText("Stop algorithm")
+
+        i = 0
+
+
+        while ((i < len(tab_moves))and(self.stopAlgo == False)):
+
+            self.update_pos_robot(tab_moves[i])
+            QTest.qWait(refresh_rate)
+            i += 1
+
+
+        self.pB_launch.setText("Launch algorithm")
+
+    def exit_animation(self):
+        self.stopAlgo = not self.stopAlgo
 
 App = QApplication(sys.argv)
 interface = Interface("Interface/interface.ui")
