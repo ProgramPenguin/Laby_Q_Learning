@@ -50,6 +50,7 @@ class Interface(QDialog):
         self.refreshRate[2] = 50
         self.refreshRate[3] = 120
         self.refreshRate[4] = 750
+        self.fp = False
 
         font_db = QtGui.QFontDatabase()
         font_id = QtGui.QFontDatabase.addApplicationFont("Font/Font Awesome 5 Pro-Solid-900.otf")
@@ -79,12 +80,10 @@ class Interface(QDialog):
     @pyqtSlot(str)
     def display_laby(self,filepath):
 
-
-        if len(self.scene.items()) <= 0:
-            l_temp = self.scene.items()
-            for i in l_temp:
-                self.scene.removeItem(i)
+        if self.fp == False:
+            self.scene.clear()
             self.scene.update()
+            self.fp = True
 
 
         self.lab = Labyrinthe.Labyrinthe([], [])
@@ -94,26 +93,40 @@ class Interface(QDialog):
         i = 0
         while (i < np.shape(self.lab.laby)[0]):
             j = 0
-            temp = []
+
             while(j < np.shape(self.lab.laby)[1]):
                 item = QtWidgets.QGraphicsRectItem(0, 0, 50, 50)
+                item.setZValue(-1)
+                text = QtWidgets.QGraphicsTextItem("")
+                text.setZValue(1)
+
+                # slot types
+                # 0 - nothing
+                # 1 - entry
+                # 2 - exit
+                # 3 - wall
+                # 4 - trap
                 if (self.lab.laby[i][j] == 0):
                     item.setBrush(QtGui.QColor('white'))
                 if (self.lab.laby[i][j] == 1):
-                    item.setBrush(QtGui.QColor('green'))
+                    text = QtWidgets.QGraphicsTextItem("\uf6bb")
                     self.pos_robot = (i,j)
                 if (self.lab.laby[i][j] == 2):
-                    item.setBrush(QtGui.QColor('orange'))
+                    text = QtWidgets.QGraphicsTextItem("\uf024")
                 if (self.lab.laby[i][j] == 3):
                     item.setBrush(QtGui.QColor('black'))
                 if (self.lab.laby[i][j] == 4):
-                    item.setBrush(QtGui.QColor('red'))
+                    text = QtWidgets.QGraphicsTextItem("\uf06d")
 
                 item.setPos(i*50,j*50)
-                temp.append(item)
+                text.setPos(i*50 + 25,j*50 + 25)
+                text.setFont(self.my_font)
+
+
                 self.scene.addItem(item)
+                self.scene.addItem(text)
                 j+=1
-            self.item_display_ref.append(temp)
+
             i+=1
 
         # arrow down : \uf063
@@ -127,8 +140,10 @@ class Interface(QDialog):
         self.image_robot.setFont(self.my_font)
 
         self.scene.addItem(self.image_robot)
-
+        self.scene.update()
         self.pB_launch.setEnabled(True)
+
+
     # @pyqtSlot(object)
     def update_pos_robot(self,dataRob):
         if dataRob != self.pos_robot :
