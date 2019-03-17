@@ -183,7 +183,8 @@ class Interface(QDialog):
             self.update_pos_robot(tab_moves[i])
             QTest.qWait(refresh_rate)
             i += 1
-
+        if(self.stopAlgo == False):
+            self.exit_animation()
 
         self.pB_launch.setText("Launch algorithm")
 
