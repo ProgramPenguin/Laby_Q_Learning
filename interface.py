@@ -27,6 +27,7 @@ class Interface(QDialog):
         self.scene = QtWidgets.QGraphicsScene(self.graphicsView_laby)
         self.graphicsView_laby.setScene(self.scene)
         self.pButton_FileSelect.clicked.connect(self.getFile_pBFS_clicked)
+        self.pB_launch.clicked.connect(self.up_clr_arrow)
         self.pB_launch.clicked.connect(self.exit_animation)
         self.pB_launch.clicked.connect(self.launch_algos)
         self.sendfileName.connect(self.display_laby)
@@ -39,6 +40,7 @@ class Interface(QDialog):
         self.refreshRate[4] = 750
         self.fp = False
         self.tab_arrow ={}
+        self.clr_arw = 0  # on clear à 3
 
         font_db = QtGui.QFontDatabase()
         font_id = QtGui.QFontDatabase.addApplicationFont("Font/Font Awesome 5 Pro-Solid-900.otf")
@@ -71,7 +73,8 @@ class Interface(QDialog):
 
         self.scene.clear()
         self.scene.update()
-        self.clear_arrow()
+        self.tab_arrow = {}
+        self.clr_arw = 0
 
         self.image_robot = QtWidgets.QGraphicsTextItem("\uf544")
         self.lab = Labyrinthe.Labyrinthe([], [])
@@ -123,18 +126,11 @@ class Interface(QDialog):
         self.pB_launch.setEnabled(True)
 
 
-    def clear_arrow(self):
-        for i in self.tab_arrow:
-            self.scene.removeItem(self.tab_arrow.get(i))
-        self.scene.update()
-        self.tab_arrow = {}
-
-
     def update_pos_robot(self,dataRob,dataQ_arrows):
         self.image_robot.setPos(dataRob[0]*50,dataRob[1]*50)
         self.pos_robot = dataRob
 
-        #moves format : [up right down left]
+        #moves format : [up down left right]
         moves = self.lab.get_moves(self.pos_robot[0],self.pos_robot[1])
         val_q = dataQ_arrows[self.pos_robot[0]][self.pos_robot[1]]
 
@@ -163,11 +159,11 @@ class Interface(QDialog):
             if indice == 0:
                 arrow = QtWidgets.QGraphicsTextItem("\uf062")
             if indice == 1:
-                arrow = QtWidgets.QGraphicsTextItem("\uf061")
-            if indice == 2:
                 arrow = QtWidgets.QGraphicsTextItem("\uf063")
-            if indice == 3:
+            if indice == 2:
                 arrow = QtWidgets.QGraphicsTextItem("\uf060")
+            if indice == 3:
+                arrow = QtWidgets.QGraphicsTextItem("\uf061")
 
             arrow.setFont(self.my_font)
             arrow.setZValue(1)
@@ -195,7 +191,7 @@ class Interface(QDialog):
             Q_tab, pos, historique, nb_finish = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 1, historique, nb_finish)
             tab_moves.append(pos)
 
-
+        self.label_score.setText("Score : " + str(nb_finish))
         self.update_affichage(tab_moves,self.refreshRate[refRateVal],Q_tab)
 
 
@@ -209,12 +205,27 @@ class Interface(QDialog):
             i += 1
         if(self.stopAlgo == False): #si on arrive a la fin de l'animation
             self.exit_animation()
-        self.clear_arrow()
+            self.clr_arw +=1
         self.pB_launch.setText("Launch algorithm")
+
+
+    def up_clr_arrow(self):
+        self.clr_arw = self.clr_arw + 1
 
 
     def exit_animation(self):
         self.stopAlgo = not self.stopAlgo
+        if self.clr_arw >= 3:
+            self.clr_arw = 1
+            self.clear_arrow()
+
+
+    def clear_arrow(self):
+        for i in self.tab_arrow:
+            self.scene.removeItem(self.tab_arrow.get(i))
+        self.scene.update()
+        self.tab_arrow = {}
+
 
 App = QApplication(sys.argv)
 interface = Interface("Interface/interface.ui")
