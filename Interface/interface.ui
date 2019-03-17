@@ -206,7 +206,7 @@
                     <widget class="QLabel" name="label_gamma">
                      <property name="maximumSize">
                       <size>
-                       <width>70</width>
+                       <width>140</width>
                        <height>16777215</height>
                       </size>
                      </property>
@@ -219,7 +219,7 @@
                       <enum>Qt::LeftToRight</enum>
                      </property>
                      <property name="text">
-                      <string>Gamma</string>
+                      <string>Long term reward</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -271,7 +271,7 @@
                     <widget class="QLabel" name="label_espillon">
                      <property name="maximumSize">
                       <size>
-                       <width>70</width>
+                       <width>140</width>
                        <height>16777215</height>
                       </size>
                      </property>
@@ -284,7 +284,7 @@
                       <enum>Qt::LeftToRight</enum>
                      </property>
                      <property name="text">
-                      <string>Espillon</string>
+                      <string>Learning rate</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -330,7 +330,7 @@
                     <widget class="QLabel" name="label_iteration">
                      <property name="maximumSize">
                       <size>
-                       <width>84</width>
+                       <width>150</width>
                        <height>16777215</height>
                       </size>
                      </property>
@@ -343,7 +343,7 @@
                       <enum>Qt::LeftToRight</enum>
                      </property>
                      <property name="text">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of &lt;/p&gt;&lt;p&gt;Iterations&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of iterations&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -451,11 +451,6 @@
                  </widget>
                 </item>
                </layout>
-              </widget>
-              <widget class="QWidget" name="gen_laby">
-               <attribute name="title">
-                <string>Generating new labyrinth . . .</string>
-               </attribute>
               </widget>
              </widget>
             </item>
