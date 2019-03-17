@@ -24,6 +24,7 @@ class Interface(QDialog):
         self.lineEdit_epsillon.setText("0.3")
         self.lineEdit_iteration.setText("5000")
 
+        # Execution will be done in order of the connections
         self.scene = QtWidgets.QGraphicsScene(self.graphicsView_laby)
         self.graphicsView_laby.setScene(self.scene)
         self.pButton_FileSelect.clicked.connect(self.getFile_pBFS_clicked)
