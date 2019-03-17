@@ -59,6 +59,8 @@ class Interface(QDialog):
 
 
     def getFile_pBFS_clicked(self):
+        if self.stopAlgo == False:
+            self.exit_animation()
         options = QFileDialog.Options()
 
         options |= QFileDialog.DontUseNativeDialog
