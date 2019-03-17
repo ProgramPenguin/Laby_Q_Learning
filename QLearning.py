@@ -17,7 +17,7 @@ class QLearning :
 
     def exploration(self,Q_tab,pos,gamma,lab,epsilon,backtrack,historique,nb_finish):
 
-        new_Q_tab = Q_tab
+        new_Q_tab = Q_tab.copy()
 
         # On obtient les mouvements possibles
         moves = lab.get_moves(pos[0],pos[1])
@@ -46,6 +46,10 @@ class QLearning :
 
         new_pos_moves = lab.get_moves(new_pos[0],new_pos[1])
         new_Q_tab[pos[0]][pos[1]][selected_index] = r + gamma * max(Q_tab[new_pos[0]][new_pos[1]][new_pos_moves])
+        test = new_Q_tab[pos[0]][pos[1]]
+        if(test[selected_index] > 0):
+            print()
+        Q_case = new_Q_tab[pos[0]][pos[1]].copy()
         # Si on arrive a la sortie, on repart a l'entree
         if lab.laby[new_pos[0]][new_pos[1]] == 2:
             nb_finish+=1
@@ -54,4 +58,4 @@ class QLearning :
                 self.backtrack(new_Q_tab,historique,r,lab)
                 historique = []
 
-        return new_Q_tab, new_pos, historique, nb_finish
+        return new_Q_tab, new_pos, historique, nb_finish, Q_case

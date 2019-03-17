@@ -128,27 +128,27 @@ class Interface(QDialog):
         self.pB_launch.setEnabled(True)
 
 
-    def update_pos_robot(self,dataRob,dataQ_arrows):
+    def update_pos_robot(self,dataRob,dataQ_arrows,dataQ_move,move_before):
         self.image_robot.setPos(dataRob[1]*50,dataRob[0]*50)
         self.pos_robot = dataRob
 
         #moves format : [up down left right]
-        moves = self.lab.get_moves(self.pos_robot[0],self.pos_robot[1])
-        val_q = dataQ_arrows[self.pos_robot[0]][self.pos_robot[1]]
+        moves = self.lab.get_moves(move_before[0],move_before[1])
+        val_q = dataQ_move
 
         val_triee = []
         for i in moves:
             val_triee.append(val_q[i])
         mx = max(val_triee)
 
-        if val_triee.count(mx) < 2:
+        if val_triee.count(mx) < 2 and mx > 0 :
             indice = 0
             for i in val_q:
                 if i == mx:
                     break
                 indice += 1
-            if self.tab_arrow.__contains__((self.pos_robot[0],self.pos_robot[1])):
-                arrow = self.tab_arrow.get((self.pos_robot[0],self.pos_robot[1]))
+            if self.tab_arrow.__contains__((move_before[1],move_before[0])):
+                arrow = self.tab_arrow.get((move_before[1],move_before[0]))
                 self.scene.removeItem(arrow)
                 self.scene.update()
 
@@ -169,8 +169,8 @@ class Interface(QDialog):
 
             arrow.setFont(self.my_font)
             arrow.setZValue(1)
-            arrow.setPos(50*self.pos_robot[1]+25,50*self.pos_robot[0])
-            self.tab_arrow[(self.pos_robot[1],self.pos_robot[0])]=arrow
+            arrow.setPos(50*move_before[1]+25,50*move_before[0])
+            self.tab_arrow[(move_before[1],move_before[0])]=arrow
             self.scene.addItem(arrow)
 
 
@@ -179,6 +179,7 @@ class Interface(QDialog):
         Q_tab = np.zeros((len(self.lab.laby), len(self.lab.laby[0]), 4))
         pos = self.lab.get_entries()[0]
         tab_moves = [pos]
+        tab_Q_moves = [[0,0,0,0]]
         historique = []
         nb_finish=0
 
@@ -190,19 +191,24 @@ class Interface(QDialog):
         ql = QLearning.QLearning()
 
         for nb_move in range(nb_iter):
-            Q_tab, pos, historique, nb_finish = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 0, historique, nb_finish)
+            Q_tab, pos, historique, nb_finish, Q_move = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 1, historique, nb_finish)
             tab_moves.append(pos)
+            tab_Q_moves.append(Q_move)
 
         self.label_score.setText("Score : " + str(nb_finish))
-        self.update_affichage(tab_moves,self.refreshRate[refRateVal],Q_tab)
+        self.update_affichage(tab_moves,self.refreshRate[refRateVal],Q_tab,tab_Q_moves)
 
 
 
-    def update_affichage(self,tab_moves,refresh_rate,tab_q):
+    def update_affichage(self,tab_moves,refresh_rate,tab_q,tab_q_moves):
         self.pB_launch.setText("Stop algorithm")
-        i = 0
+        i = 1
         while ((i < len(tab_moves))and(self.stopAlgo == False)):
-            self.update_pos_robot(tab_moves[i],tab_q)
+            if(tab_moves[i][0] == 10 and tab_moves[i][1] == 9):
+                print()
+            if (tab_moves[i][0] == 9 and tab_moves[i][1] == 10):
+                print()
+            self.update_pos_robot(tab_moves[i],tab_q,tab_q_moves[i],tab_moves[i-1])
             QTest.qWait(refresh_rate)
             i += 1
         if(self.stopAlgo == False): #si on arrive a la fin de l'animation
