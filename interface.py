@@ -102,7 +102,7 @@ class Interface(QDialog):
                     item.setBrush(QtGui.QColor('white'))
                 if (self.lab.laby[i][j] == 1):
                     text = QtWidgets.QGraphicsTextItem("\uf6bb")
-                    self.pos_robot = (i,j)
+                    self.pos_robot = (j,i)
                 if (self.lab.laby[i][j] == 2):
                     text = QtWidgets.QGraphicsTextItem("\uf024")
                 if (self.lab.laby[i][j] == 3):
@@ -110,8 +110,8 @@ class Interface(QDialog):
                 if (self.lab.laby[i][j] == 4):
                     text = QtWidgets.QGraphicsTextItem("\uf06d")
 
-                item.setPos(i*50,j*50)
-                text.setPos(i*50 + 25,j*50 + 25)
+                item.setPos(j*50,i*50)
+                text.setPos(j*50 + 25,i*50 + 25)
                 text.setFont(self.my_font)
 
 
@@ -129,7 +129,7 @@ class Interface(QDialog):
 
 
     def update_pos_robot(self,dataRob,dataQ_arrows):
-        self.image_robot.setPos(dataRob[0]*50,dataRob[1]*50)
+        self.image_robot.setPos(dataRob[1]*50,dataRob[0]*50)
         self.pos_robot = dataRob
 
         #moves format : [up down left right]
@@ -159,18 +159,18 @@ class Interface(QDialog):
             # arrow right: \uf061
             # arrow up   : \uf062
             if indice == 0:
-                arrow = QtWidgets.QGraphicsTextItem("\uf062")
+                arrow = QtWidgets.QGraphicsTextItem("\uf061")
             if indice == 1:
                 arrow = QtWidgets.QGraphicsTextItem("\uf063")
             if indice == 2:
                 arrow = QtWidgets.QGraphicsTextItem("\uf060")
             if indice == 3:
-                arrow = QtWidgets.QGraphicsTextItem("\uf061")
+                arrow = QtWidgets.QGraphicsTextItem("\uf062")
 
             arrow.setFont(self.my_font)
             arrow.setZValue(1)
-            arrow.setPos(50*self.pos_robot[0]+25,50*self.pos_robot[1])
-            self.tab_arrow[(self.pos_robot[0],self.pos_robot[1])]=arrow
+            arrow.setPos(50*self.pos_robot[1]+25,50*self.pos_robot[0])
+            self.tab_arrow[(self.pos_robot[1],self.pos_robot[0])]=arrow
             self.scene.addItem(arrow)
 
 
@@ -178,7 +178,7 @@ class Interface(QDialog):
         self.lab.rewards = [-1, -25, 100, -50]
         Q_tab = np.zeros((len(self.lab.laby), len(self.lab.laby[0]), 4))
         pos = self.lab.get_entries()[0]
-        tab_moves = []
+        tab_moves = [pos]
         historique = []
         nb_finish=0
 
@@ -190,7 +190,7 @@ class Interface(QDialog):
         ql = QLearning.QLearning()
 
         for nb_move in range(nb_iter):
-            Q_tab, pos, historique, nb_finish = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 1, historique, nb_finish)
+            Q_tab, pos, historique, nb_finish = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 0, historique, nb_finish)
             tab_moves.append(pos)
 
         self.label_score.setText("Score : " + str(nb_finish))

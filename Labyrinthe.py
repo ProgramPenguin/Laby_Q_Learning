@@ -9,10 +9,10 @@ import numpy as np;
 # 4 - trap
 
 # direction
-# 0 - up
-# 1 - right
-# 2 - down
-# 3 - left
+# 0 - right
+# 1 - down
+# 2 - left
+# 3 - up
 
 class Labyrinthe:
 
@@ -66,17 +66,17 @@ class Labyrinthe:
             return moves
         else :
             # check left
-            if(self.laby[pos_x-1][pos_y] != 3):
-                moves.extend([3])
+            if(self.laby[pos_x][pos_y-1] != 3):
+                moves.extend([2])
             # checks right
+            if (self.laby[pos_x][pos_y+1] != 3):
+                moves.extend([0])
+            # checks up
+            if (self.laby[pos_x-1][pos_y] != 3):
+                moves.extend([3])
+            # checks down
             if (self.laby[pos_x+1][pos_y] != 3):
                 moves.extend([1])
-            # checks up
-            if (self.laby[pos_x][pos_y+1] != 3):
-                moves.extend([2])
-            # checks down
-            if (self.laby[pos_x][pos_y-1] != 3):
-                moves.extend([0])
         return moves
 
     def move(self,pos_x,pos_y,dir):
@@ -84,18 +84,18 @@ class Labyrinthe:
 
         if dir in moves:
             # update position
-            if (dir == 3):
-                new_pos_x = pos_x - 1
-                new_pos_y = pos_y
+            if (dir == 0):
+                new_pos_x = pos_x
+                new_pos_y = pos_y + 1
             if (dir == 1):
                 new_pos_x = pos_x + 1
                 new_pos_y = pos_y
-            if (dir == 0):
-                new_pos_x = pos_x
-                new_pos_y = pos_y - 1
             if (dir == 2):
                 new_pos_x = pos_x
-                new_pos_y = pos_y + 1
+                new_pos_y = pos_y - 1
+            if (dir == 3):
+                new_pos_x = pos_x - 1
+                new_pos_y = pos_y
 
             # assign reward
             new_type = self.laby[new_pos_x][new_pos_y]
