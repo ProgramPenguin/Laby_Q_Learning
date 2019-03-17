@@ -156,6 +156,8 @@ class Interface(QDialog):
         Q_tab = np.zeros((len(self.lab.laby), len(self.lab.laby[0]), 4))
         pos = self.lab.get_entries()[0]
         tab_moves = []
+        historique = []
+        nb_finish=0
 
         gamma = float(self.lineEdit_gamma.text())
         epsillon = float(self.lineEdit_epsillon.text())
@@ -165,8 +167,10 @@ class Interface(QDialog):
         ql = QLearning.QLearning()
 
         for nb_move in range(nb_iter):
-            Q_tab, pos = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 0,[1, 2, 3, 0])
+            Q_tab, pos, historique, nb_finish = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 1, historique, nb_finish)
             tab_moves.append(pos)
+
+        print("nb_finish = ",nb_finish)
 
         self.update_affichage(tab_moves,self.refreshRate[refRateVal])
 

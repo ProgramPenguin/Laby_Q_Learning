@@ -4,7 +4,18 @@ import numpy as np
 
 class QLearning :
 
-    def exploration(self,Q_tab,pos,gamma,lab,epsilon,backtrack,politique):
+    def backtrack(self,Q_tab,historique,reward,lab):
+        # Calcul de la recompense a ajouter à chaque case
+        reward_case = reward/len(historique)
+
+        for move in historique:
+            Q_tab[move[0]][move[1]][move[2]] = Q_tab[move[0]][move[1]][move[2]] + reward_case
+
+        return Q_tab
+
+
+
+    def exploration(self,Q_tab,pos,gamma,lab,epsilon,backtrack,historique,nb_finish):
 
         new_Q_tab = Q_tab
 
@@ -28,20 +39,19 @@ class QLearning :
                     moves_max.append(case)
 
             # # On choisit une action au hasard parmis celles avec Q maximal
-            # selected_index = Q_moves_max[0][random.randint(0,len(Q_moves_max[0])-1)]
-            # On choisit l'action a faire en suivant la politique parmis les Q maximal
-            j = 0
-            selected_index = politique[j]
-            while (not selected_index in moves_max):
-                selected_index = politique[j]
-                j+=1
+            selected_index = moves_max[random.randint(0,len(moves_max)-1)]
 
         r, new_pos = lab.move(pos[0],pos[1],selected_index)
+        historique.append((pos[0],pos[1],selected_index))
 
         new_pos_moves = lab.get_moves(new_pos[0],new_pos[1])
         new_Q_tab[pos[0]][pos[1]][selected_index] = r + gamma * max(Q_tab[new_pos[0]][new_pos[1]][new_pos_moves])
         # Si on arrive a la sortie, on repart a l'entree
         if lab.laby[new_pos[0]][new_pos[1]] == 2:
+            nb_finish+=1
             new_pos = lab.get_entries()[0]
+            if(backtrack != 0):
+                self.backtrack(new_Q_tab,historique,r,lab)
+                historique = []
 
-        return new_Q_tab, new_pos
+        return new_Q_tab, new_pos, historique, nb_finish
