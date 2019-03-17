@@ -237,8 +237,3 @@ class Interface(QDialog):
             self.scene.removeItem(self.tab_arrow.get(i))
         self.scene.update()
         self.tab_arrow = {}
-
-
-App = QApplication(sys.argv)
-interface = Interface("Interface/interface.ui")
-sys.exit(App.exec())
