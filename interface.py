@@ -195,7 +195,7 @@ class Interface(QDialog):
             Q_tab, pos, historique, nb_finish = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 1, historique, nb_finish)
             tab_moves.append(pos)
 
-        print("nb_finish = ",nb_finish)
+
         self.update_affichage(tab_moves,self.refreshRate[refRateVal],Q_tab)
 
 
@@ -209,7 +209,7 @@ class Interface(QDialog):
             i += 1
         if(self.stopAlgo == False): #si on arrive a la fin de l'animation
             self.exit_animation()
-
+        self.clear_arrow()
         self.pB_launch.setText("Launch algorithm")
 
 
