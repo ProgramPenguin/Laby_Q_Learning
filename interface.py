@@ -1,35 +1,22 @@
-# from PyQt5.QtGui import QPixmap, QGuiApplication, QIcon ,QImage
-# from PyQt5.QtCore import pyqtSlot
-# from PyQt5.QtWidgets import QDialog, QListWidgetItem, QListView, QListWidgetItem
-# from PyQt5.uic import loadUi
-# from PyQt5.QtCore import Qt
-# from PyQt5.QtWidgets import QApplication
-# import sys
-
-from PyQt5 import QtWidgets, QtGui,Qt, QtCore
+from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication, QGraphicsEllipseItem
-from PyQt5.QtCore import pyqtSlot, pyqtSignal, QRectF, QStringListModel
+from PyQt5.QtWidgets import QDialog, QFileDialog, QApplication
+from PyQt5.QtCore import  pyqtSlot, pyqtSignal
 from PyQt5.QtTest import QTest
 import QLearning
-import random
 import numpy as np
 import sys
 import Labyrinthe
-import time
 
 class Interface(QDialog):
 
     sendfileName = pyqtSignal(str)
-    sendPos = pyqtSignal(object)
 
     def __init__(self, UiFilePath):
         super().__init__()
         loadUi(UiFilePath,self)
         self.setWindowTitle("Labyrinth")
         self.InitWindow()
-
-        self.sendPos.connect(self.update_pos_robot)
 
         self.qlearn = QLearning.QLearning()
 
@@ -51,6 +38,7 @@ class Interface(QDialog):
         self.refreshRate[3] = 120
         self.refreshRate[4] = 750
         self.fp = False
+        self.tab_arrow ={}
 
         font_db = QtGui.QFontDatabase()
         font_id = QtGui.QFontDatabase.addApplicationFont("Font/Font Awesome 5 Pro-Solid-900.otf")
@@ -59,7 +47,6 @@ class Interface(QDialog):
         self.my_font.setPointSize(12)
 
         self.pos_robot = (0, 0)
-        self.image_robot = QtWidgets.QGraphicsTextItem("\uf544")
         self.pB_launch.setEnabled(False)
 
         self.lab = Labyrinthe.Labyrinthe([], [])
@@ -67,6 +54,7 @@ class Interface(QDialog):
 
     def InitWindow(self):
         self.show()
+
 
     def getFile_pBFS_clicked(self):
         options = QFileDialog.Options()
@@ -80,16 +68,15 @@ class Interface(QDialog):
     @pyqtSlot(str)
     def display_laby(self,filepath):
 
-        if self.fp == False:
-            self.scene.clear()
-            self.scene.update()
-            self.fp = True
 
+        self.scene.clear()
+        self.scene.update()
+        self.clear_arrow()
 
+        self.image_robot = QtWidgets.QGraphicsTextItem("\uf544")
         self.lab = Labyrinthe.Labyrinthe([], [])
         self.lab.load_labyrinthe(filepath)
         self.item_display_ref = []
-
         i = 0
         while (i < np.shape(self.lab.laby)[0]):
             j = 0
@@ -126,16 +113,8 @@ class Interface(QDialog):
                 self.scene.addItem(item)
                 self.scene.addItem(text)
                 j+=1
-
             i+=1
-
-        # arrow down : \uf063
-        # arrow left : \uf060
-        # arrow right: \uf061
-        # arrow up   : \uf062
         # robot      : \uf544
-
-
         self.image_robot.setPos(self.pos_robot[0] * 50 , self.pos_robot[1] * 50)
         self.image_robot.setFont(self.my_font)
 
@@ -144,11 +123,57 @@ class Interface(QDialog):
         self.pB_launch.setEnabled(True)
 
 
-    # @pyqtSlot(object)
-    def update_pos_robot(self,dataRob):
-        if dataRob != self.pos_robot :
-            self.image_robot.setPos(dataRob[0]*50,dataRob[1]*50)
-            self.pos_robot = dataRob
+    def clear_arrow(self):
+        for i in self.tab_arrow:
+            self.scene.removeItem(self.tab_arrow.get(i))
+        self.scene.update()
+        self.tab_arrow = {}
+
+
+    def update_pos_robot(self,dataRob,dataQ_arrows):
+        self.image_robot.setPos(dataRob[0]*50,dataRob[1]*50)
+        self.pos_robot = dataRob
+
+        #moves format : [up right down left]
+        moves = self.lab.get_moves(self.pos_robot[0],self.pos_robot[1])
+        val_q = dataQ_arrows[self.pos_robot[0]][self.pos_robot[1]]
+
+        val_triee = []
+        for i in moves:
+            val_triee.append(val_q[i])
+        mx = max(val_triee)
+
+        if val_triee.count(mx) < 2:
+            indice = 0
+            for i in val_q:
+                if i == mx:
+                    break
+                indice += 1
+            if self.tab_arrow.__contains__((self.pos_robot[0],self.pos_robot[1])):
+                arrow = self.tab_arrow.get((self.pos_robot[0],self.pos_robot[1]))
+                self.scene.removeItem(arrow)
+                self.scene.update()
+
+
+
+            # arrow down : \uf063
+            # arrow left : \uf060
+            # arrow right: \uf061
+            # arrow up   : \uf062
+            if indice == 0:
+                arrow = QtWidgets.QGraphicsTextItem("\uf062")
+            if indice == 1:
+                arrow = QtWidgets.QGraphicsTextItem("\uf061")
+            if indice == 2:
+                arrow = QtWidgets.QGraphicsTextItem("\uf063")
+            if indice == 3:
+                arrow = QtWidgets.QGraphicsTextItem("\uf060")
+
+            arrow.setFont(self.my_font)
+            arrow.setZValue(1)
+            arrow.setPos(50*self.pos_robot[0]+25,50*self.pos_robot[1])
+            self.tab_arrow[(self.pos_robot[0],self.pos_robot[1])]=arrow
+            self.scene.addItem(arrow)
 
 
     def launch_algos(self):
@@ -171,26 +196,22 @@ class Interface(QDialog):
             tab_moves.append(pos)
 
         print("nb_finish = ",nb_finish)
-
-        self.update_affichage(tab_moves,self.refreshRate[refRateVal])
-
+        self.update_affichage(tab_moves,self.refreshRate[refRateVal],Q_tab)
 
 
-    def update_affichage(self,tab_moves,refresh_rate):
+
+    def update_affichage(self,tab_moves,refresh_rate,tab_q):
         self.pB_launch.setText("Stop algorithm")
-
         i = 0
-
-
         while ((i < len(tab_moves))and(self.stopAlgo == False)):
-
-            self.update_pos_robot(tab_moves[i])
+            self.update_pos_robot(tab_moves[i],tab_q)
             QTest.qWait(refresh_rate)
             i += 1
-        if(self.stopAlgo == False):
+        if(self.stopAlgo == False): #si on arrive a la fin de l'animation
             self.exit_animation()
 
         self.pB_launch.setText("Launch algorithm")
+
 
     def exit_animation(self):
         self.stopAlgo = not self.stopAlgo
