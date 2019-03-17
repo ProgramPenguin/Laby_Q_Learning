@@ -172,6 +172,9 @@
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QTabWidget" name="tabWidget">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="font">
                <font>
                 <family>Font Awesome 5 Brands Regular</family>
@@ -192,7 +195,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
-                    <height>40</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="frameShape">
@@ -206,7 +209,7 @@
                     <widget class="QLabel" name="label_gamma">
                      <property name="maximumSize">
                       <size>
-                       <width>140</width>
+                       <width>142</width>
                        <height>16777215</height>
                       </size>
                      </property>
@@ -219,7 +222,7 @@
                       <enum>Qt::LeftToRight</enum>
                      </property>
                      <property name="text">
-                      <string>Long term reward</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Long term reward&lt;/p&gt;&lt;p&gt;(between 0 and 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -257,7 +260,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
-                    <height>40</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="frameShape">
@@ -271,7 +274,7 @@
                     <widget class="QLabel" name="label_espillon">
                      <property name="maximumSize">
                       <size>
-                       <width>140</width>
+                       <width>142</width>
                        <height>16777215</height>
                       </size>
                      </property>
@@ -284,7 +287,7 @@
                       <enum>Qt::LeftToRight</enum>
                      </property>
                      <property name="text">
-                      <string>Learning rate</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Learning rate&lt;/p&gt;&lt;p&gt;(between 0 and 1)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -434,6 +437,55 @@
                      </property>
                      <property name="tickInterval">
                       <number>1</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QFrame" name="frame_backtrack">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QLabel" name="label_backtrack">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777164</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <pointsize>12</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>Backtracking</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="cB_backtrack">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>20</width>
+                       <height>20</height>
+                      </size>
                      </property>
                     </widget>
                    </item>

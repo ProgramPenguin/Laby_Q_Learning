@@ -189,9 +189,13 @@ class Interface(QDialog):
         refRateVal = self.hS_disRate.value()
 
         ql = QLearning.QLearning()
+        if self.cB_backtrack.isChecked():
+            backtrack = 1
+        else :
+            backtrack = 0
 
         for nb_move in range(nb_iter):
-            Q_tab, pos, historique, nb_finish, Q_move = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, 1, historique, nb_finish)
+            Q_tab, pos, historique, nb_finish, Q_move = ql.exploration(Q_tab, pos, gamma, self.lab, epsillon, backtrack, historique, nb_finish)
             tab_moves.append(pos)
             tab_Q_moves.append(Q_move)
 
